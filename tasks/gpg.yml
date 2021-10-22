@@ -1,0 +1,37 @@
+- name: Create home directory for GPG
+  file:
+    path: "{{ gpg_backup_homedir }}"
+    state: directory
+    recurse: yes
+    owner: root
+    group: root
+    mode: 0700
+  become: yes
+
+- name: Copy encryption key
+  copy:
+    src: "{{ gpg_encrypt_key_local_path }}"
+    dest: /root/.enc.pub
+    owner: root
+    group: root
+    mode: 0600
+  become: yes
+
+- name: Import encryption key
+  command: 'gpg --homedir {{ gpg_backup_homedir }} --import /root/.enc.pub'
+  become: yes
+
+- name: Make key trusted
+  shell: "gpg --homedir {{ gpg_backup_homedir }} --list-keys --fingerprint | grep ^pub -A 1 | tail -1 | tr -d ' ' | awk 'BEGIN { FS = \"\\n\" } ; { print $1\":6:\" }' | gpg --homedir {{ gpg_backup_homedir }} --import-ownertrust"
+  become: yes
+
+- name: Get key fingerprint
+  shell: "gpg --homedir {{ gpg_backup_homedir }} --with-colons --import-options show-only --import --fingerprint < enc.pub | awk -F: '$1 == \"fpr\" {print $10;}'|head -n 1"
+  become: yes
+  register: fingerprint
+
+- set_fact:
+    gpg_encrypt_key: "{{ fingerprint.stdout }}"
+
+- debug:
+    var: gpg_encrypt_key

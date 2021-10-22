@@ -1,0 +1,9 @@
+sources=( "{{ backup_sources|join('" "')}}" )
+destination="{{ backup_destination }}"
+{% if gpg_encrypt|bool %}
+encrypt=1
+gpg_homedir="{{ gpg_backup_homedir }}"
+gpg_encrypt_key="{{ gpg_encrypt_key }}"
+{% else %}
+encrypt=0
+{% endif %}

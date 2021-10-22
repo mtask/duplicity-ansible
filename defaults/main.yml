@@ -1,0 +1,6 @@
+backup_destination: "file:///srv/backups/"
+backup_sources:
+  - '/etc/'
+gpg_encrypt: false
+gpg_backup_homedir: '/root/.backup_gpg'
+gpg_encrypt_key_local_path: 'files/enc.key.pub'

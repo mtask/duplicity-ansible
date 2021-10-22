@@ -1,0 +1,25 @@
+- name: Ensure duplicity service file exists
+  template:
+    src: "duplicity.service.j2"
+    dest: "/etc/systemd/system/duplicity.service"
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+
+- name: Ensure duplicity service timer file exists
+  template:
+    src: "duplicity-daily.timer.j2"
+    dest: "/etc/systemd/system/duplicity-daily.timer"
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+
+- name: Ensure duplicity service timer is enabled
+  systemd:
+    name: "duplicity-daily.timer"
+    enabled: yes
+    state: started
+    daemon-reload: yes
+  become: yes

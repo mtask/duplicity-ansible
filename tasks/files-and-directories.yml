@@ -1,0 +1,37 @@
+---
+- name: Create /etc/backups
+  file:
+    path: /etc/backups
+    state: directory
+    mode: 0750
+    owner: root
+    group: root
+  become: yes
+
+- name: Create backup destination directory if destination is local
+  file:
+    path: "{{ backup_destination.split('file://')[1] }}"
+    owner: root
+    group: root
+    mode: 0750
+    state: directory
+  become: yes
+  when: 'backup_destination.startswith("file://")'
+  
+- name: Copy backup script to /usr/local/sbin/backup.sh
+  copy:
+    src: backup.sh
+    dest: /usr/local/sbin/backup.sh
+    owner: root
+    group: root
+    mode: 0750
+  become: yes
+
+- name: Populate backup.config to /etc/backups/backup.config
+  template:
+    src: backup.config.j2
+    dest: /etc/backups/backup.config
+    owner: root
+    group: root
+    mode: 0600
+  become: yes

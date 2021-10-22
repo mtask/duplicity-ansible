@@ -1,0 +1,10 @@
+---
+- name: Ensure duplicity is installed
+  apt:
+    name: duplicity
+  become: yes  
+
+- include_tasks: gpg.yml
+  when: gpg_encrypt|bool
+- include_tasks: files-and-directories.yml
+- include_tasks: systemd-service.yml

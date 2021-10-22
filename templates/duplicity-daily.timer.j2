@@ -1,0 +1,11 @@
+[Unit]
+Description=duplicity daily backup
+
+[Timer]
+# 05:30 is the clock time when to start it
+OnCalendar=17:00
+Persistent=true
+Unit=duplicity.service
+
+[Install]
+WantedBy=timers.target
